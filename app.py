@@ -436,7 +436,7 @@ confirmar = st.checkbox(
 
 if st.button("Excluir Produto"):
 
-if not confirmar:
+    if not confirmar:
 
     st.warning(
         "Marque a confirmação antes de excluir."
