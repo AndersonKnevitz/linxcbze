@@ -1,102 +1,398 @@
-
-import sqlite3, pandas as pd, streamlit as st
+import sqlite3
 from io import BytesIO
 
-st.set_page_config(page_title="Consulta de Produtos CBZ", layout="wide")
+import pandas as pd
+import streamlit as st
 
-DB="cbz.db"
+st.set_page_config(
+    page_title="Consulta de Produtos CBZ",
+    page_icon="📦",
+    layout="wide"
+)
+
+DB = "cbz.db"
+
+
+# ==========================
+# BANCO DE DADOS
+# ==========================
 
 def init_db():
-    con=sqlite3.connect(DB)
-    cur=con.cursor()
-    cur.execute("""CREATE TABLE IF NOT EXISTS produtos(
-        codigo_cbz TEXT PRIMARY KEY,
-        descricao TEXT NOT NULL,
-        ean TEXT NOT NULL)""")
-    con.commit(); con.close()
+    con = sqlite3.connect(DB)
+    cur = con.cursor()
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS produtos(
+            codigo_cbz TEXT PRIMARY KEY,
+            descricao TEXT NOT NULL,
+            ean TEXT NOT NULL
+        )
+    """)
+
+    con.commit()
+    con.close()
+
+
+def get_produtos():
+    con = sqlite3.connect(DB)
+    df = pd.read_sql("SELECT * FROM produtos", con)
+    con.close()
+    return df
+
 
 init_db()
 
+
+# ==========================
+# CSS
+# ==========================
+
 st.markdown("""
 <style>
-.stApp{background:#0f1115;color:white}
-.card{background:#1b1f27;padding:15px;border-radius:12px}
+
+/* Fundo */
+
+.stApp{
+    background:#0B1120;
+}
+
+/* Título */
+
+.main-title{
+    color:white;
+    font-size:42px;
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.sub-title{
+    color:#94A3B8;
+    margin-bottom:25px;
+}
+
+/* Card principal */
+
+.metric-card{
+    background:#111827;
+    border:1px solid #1F2937;
+    border-radius:16px;
+    padding:25px;
+    margin-bottom:20px;
+}
+
+.metric-number{
+    font-size:38px;
+    font-weight:700;
+    color:#3B82F6;
+}
+
+.metric-label{
+    color:#CBD5E1;
+    font-size:14px;
+}
+
+/* Inputs */
+
+.stTextInput input{
+    background:#1E293B !important;
+    color:white !important;
+    border:1px solid #334155 !important;
+    border-radius:10px !important;
+}
+
+/* Botões */
+
+.stButton > button{
+    width:100%;
+    background:#2563EB !important;
+    color:white !important;
+    border:none !important;
+    border-radius:10px !important;
+    padding:12px !important;
+    font-weight:600 !important;
+}
+
+.stButton > button:hover{
+    background:#1D4ED8 !important;
+}
+
+/* Download */
+
+.stDownloadButton > button{
+    width:100%;
+    background:#10B981 !important;
+    color:white !important;
+    border:none !important;
+    border-radius:10px !important;
+    padding:12px !important;
+    font-weight:600 !important;
+}
+
+/* Tabela */
+
+div[data-testid="stDataFrame"]{
+    border:1px solid #1F2937;
+    border-radius:14px;
+    overflow:hidden;
+}
+
+/* Upload */
+
+[data-testid="stFileUploader"]{
+    background:#111827;
+    border-radius:12px;
+    padding:15px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
-if "auth" not in st.session_state:
-    st.session_state.auth=False
 
-tab1,tab2=st.tabs(["Consulta","Administração"])
+# ==========================
+# SESSÃO
+# ==========================
+
+if "auth" not in st.session_state:
+    st.session_state.auth = False
+
+
+# ==========================
+# ABAS
+# ==========================
+
+tab1, tab2 = st.tabs([
+    "🔍 Consulta",
+    "⚙️ Administração"
+])
+
+
+# =====================================================
+# CONSULTA
+# =====================================================
 
 with tab1:
-    st.title("Consulta de Produtos CBZ")
-    con=sqlite3.connect(DB)
-    df=pd.read_sql("select * from produtos",con)
-    con.close()
 
-    busca=st.text_input("Pesquisar por Código CBZ, Descrição ou EAN")
+    df = get_produtos()
+
+    st.markdown("""
+    <div class="main-title">
+        Consulta de Produtos CBZ
+    </div>
+    <div class="sub-title">
+        Consulte rapidamente produtos através do Código CBZ, Descrição ou EAN.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown(f"""
+    <div class="metric-card">
+        <div class="metric-number">{len(df)}</div>
+        <div class="metric-label">
+            Produtos cadastrados na base
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    busca = st.text_input(
+        "",
+        placeholder="🔍 Pesquisar por Código CBZ, Descrição ou EAN"
+    )
+
     if busca:
-        m=(df["codigo_cbz"].astype(str).str.contains(busca,case=False,na=False)|
-           df["descricao"].astype(str).str.contains(busca,case=False,na=False)|
-           df["ean"].astype(str).str.contains(busca,case=False,na=False))
-        df=df[m]
 
-    c1,c2,c3=st.columns(3)
-    c1.metric("Produtos",len(df))
-    c2.metric("Status","Online")
-    c3.metric("Banco","SQLite")
+        filtro = (
+            df["codigo_cbz"].astype(str).str.contains(busca, case=False, na=False)
+            |
+            df["descricao"].astype(str).str.contains(busca, case=False, na=False)
+            |
+            df["ean"].astype(str).str.contains(busca, case=False, na=False)
+        )
 
-    st.dataframe(df,use_container_width=True)
+        df = df[filtro]
+
+    st.dataframe(
+        df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+
+# =====================================================
+# ADMIN
+# =====================================================
 
 with tab2:
+
     if not st.session_state.auth:
-        u=st.text_input("Usuário")
-        p=st.text_input("Senha",type="password")
+
+        st.subheader("Acesso Administrativo")
+
+        usuario = st.text_input("Usuário")
+
+        senha = st.text_input(
+            "Senha",
+            type="password"
+        )
+
         if st.button("Entrar"):
-            if u=="suporte" and p=="1":
-                st.session_state.auth=True
+
+            if usuario == "suporte" and senha == "1":
+
+                st.session_state.auth = True
                 st.rerun()
+
             else:
-                st.error("Login inválido")
+                st.error("Usuário ou senha inválidos")
+
     else:
-        st.header("Painel Administrativo")
 
-        con=sqlite3.connect(DB)
-        df=pd.read_sql("select * from produtos",con)
+        st.markdown("""
+        <div class="main-title">
+            Painel Administrativo
+        </div>
+        """, unsafe_allow_html=True)
 
-        st.metric("Total Produtos",len(df))
+        con = sqlite3.connect(DB)
 
-        with st.form("cad"):
-            codigo=st.text_input("Código CBZ")
-            desc=st.text_input("Descrição")
-            ean=st.text_input("EAN")
-            ok=st.form_submit_button("Salvar")
-            if ok and codigo and desc and ean:
-                con.execute("INSERT OR REPLACE INTO produtos values(?,?,?)",(codigo,desc,ean))
+        df = pd.read_sql(
+            "SELECT * FROM produtos",
+            con
+        )
+
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-number">{len(df)}</div>
+            <div class="metric-label">
+                Produtos cadastrados
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.subheader("Cadastro de Produto")
+
+        with st.form("cadastro"):
+
+            codigo = st.text_input("Código CBZ")
+            descricao = st.text_input("Descrição")
+            ean = st.text_input("EAN")
+
+            salvar = st.form_submit_button("Salvar Produto")
+
+            if salvar:
+
+                if codigo and descricao and ean:
+
+                    con.execute(
+                        """
+                        INSERT OR REPLACE INTO produtos
+                        VALUES (?, ?, ?)
+                        """,
+                        (
+                            codigo,
+                            descricao,
+                            ean
+                        )
+                    )
+
+                    con.commit()
+
+                    st.success(
+                        "Produto salvo com sucesso."
+                    )
+
+                    st.rerun()
+
+        st.divider()
+
+        st.subheader("Importação em Massa")
+
+        arquivo = st.file_uploader(
+            "Selecione a planilha Excel",
+            type=["xlsx"]
+        )
+
+        if arquivo:
+
+            try:
+
+                imp = pd.read_excel(arquivo)
+
+                total = 0
+
+                for _, row in imp.iterrows():
+
+                    con.execute(
+                        """
+                        INSERT OR REPLACE INTO produtos
+                        VALUES (?, ?, ?)
+                        """,
+                        (
+                            str(row.iloc[0]),
+                            str(row.iloc[1]),
+                            str(row.iloc[2])
+                        )
+                    )
+
+                    total += 1
+
                 con.commit()
-                st.success("Registro salvo")
 
-        st.subheader("Importar Excel")
-        arq=st.file_uploader("Planilha",type=["xlsx"])
-        if arq:
-            imp=pd.read_excel(arq)
-            for _,r in imp.iterrows():
-                con.execute("INSERT OR REPLACE INTO produtos values(?,?,?)",
-                            (str(r.iloc[0]),str(r.iloc[1]),str(r.iloc[2])))
-            con.commit()
-            st.success("Importação concluída")
+                st.success(
+                    f"{total} registros importados."
+                )
 
-        df=pd.read_sql("select * from produtos",con)
+                st.rerun()
 
-        st.subheader("Produtos")
-        st.dataframe(df,use_container_width=True)
+            except Exception as erro:
+                st.error(str(erro))
 
-        csv=df.to_csv(index=False).encode()
-        st.download_button("Exportar CSV",csv,"produtos.csv","text/csv")
+        st.divider()
 
-        bio=BytesIO()
-        with pd.ExcelWriter(bio,engine="openpyxl") as w:
-            df.to_excel(w,index=False)
-        st.download_button("Exportar Excel",bio.getvalue(),"produtos.xlsx")
+        st.subheader("Produtos Cadastrados")
+
+        df = pd.read_sql(
+            "SELECT * FROM produtos ORDER BY descricao",
+            con
+        )
+
+        st.dataframe(
+            df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        csv = df.to_csv(
+            index=False
+        ).encode("utf-8")
+
+        excel_buffer = BytesIO()
+
+        with pd.ExcelWriter(
+            excel_buffer,
+            engine="openpyxl"
+        ) as writer:
+
+            df.to_excel(
+                writer,
+                index=False
+            )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            st.download_button(
+                "📄 Exportar CSV",
+                csv,
+                "produtos.csv",
+                "text/csv"
+            )
+
+        with col2:
+
+            st.download_button(
+                "📊 Exportar Excel",
+                excel_buffer.getvalue(),
+                "produtos.xlsx"
+            )
+
         con.close()
