@@ -204,6 +204,31 @@ small,
 div{
     color:#E2E8F0;
 }
+/* Selectbox Dark */
+
+[data-baseweb="select"] > div{
+    background:#1E293B !important;
+    border:1px solid #334155 !important;
+    border-radius:10px !important;
+}
+
+[data-baseweb="select"] span{
+    color:#F8FAFC !important;
+    font-weight:500 !important;
+}
+
+[data-baseweb="popover"]{
+    background:#111827 !important;
+}
+
+div[role="option"]{
+    background:#111827 !important;
+    color:#F8FAFC !important;
+}
+
+div[role="option"]:hover{
+    background:#1E293B !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
