@@ -144,6 +144,67 @@ div[data-testid="stDataFrame"]{
     padding:15px;
 }
 
+/* ==================================
+   CORRIGE TEXTOS ESCUROS
+================================== */
+
+/* Labels dos campos */
+
+label,
+[data-testid="stWidgetLabel"],
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] span{
+    color:#E5E7EB !important;
+}
+
+/* Títulos */
+
+h1,
+h2,
+h3,
+h4,
+h5{
+    color:#FFFFFF !important;
+}
+
+/* Placeholders */
+
+input::placeholder{
+    color:#94A3B8 !important;
+    opacity:1 !important;
+}
+
+/* Texto dos tabs */
+
+button[role="tab"]{
+    color:#CBD5E1 !important;
+}
+
+button[role="tab"][aria-selected="true"]{
+    color:#3B82F6 !important;
+}
+
+/* Login */
+
+[data-testid="stForm"] label{
+    color:#F8FAFC !important;
+}
+
+/* Subheaders */
+
+.stSubheader{
+    color:#FFFFFF !important;
+}
+
+/* Texto geral */
+
+p,
+span,
+small,
+div{
+    color:#E2E8F0;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
