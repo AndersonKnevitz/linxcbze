@@ -267,9 +267,13 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
-        st.subheader("Cadastro de Produto")
+        st.markdown("""
+<h2 style="color:white;margin-bottom:20px;">
+📦 Novo Produto
+</h2>
+""", unsafe_allow_html=True)
 
-        with st.form("cadastro"):
+        with st.form("cadastro", clear_on_submit=True):
 
             codigo = st.text_input("Código CBZ")
             descricao = st.text_input("Descrição")
