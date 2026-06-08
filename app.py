@@ -407,12 +407,12 @@ with tab2:
 
                 st.rerun()
 
-            except Exception as erro:
+       except Exception as erro:
                 st.error(str(erro))
 
-       st.divider()
+        st.divider()
 
-st.subheader("Produtos Cadastrados")
+        st.subheader("Produtos Cadastrados")
 
 df = pd.read_sql(
     "SELECT * FROM produtos ORDER BY descricao",
