@@ -419,6 +419,47 @@ with tab2:
             con
         )
 
+        st.subheader("🗑️ Excluir Produto")
+
+produto_excluir = st.selectbox(
+"Selecione o produto",
+options=df["codigo_cbz"].tolist(),
+format_func=lambda x: (
+f"{x} - "
+f"{df[df['codigo_cbz']==x]['descricao'].iloc[0]}"
+)
+)
+
+confirmar = st.checkbox(
+"Confirmo que desejo excluir este produto"
+)
+
+if st.button("Excluir Produto"):
+
+```
+if not confirmar:
+
+    st.warning(
+        "Marque a confirmação antes de excluir."
+    )
+
+else:
+
+    con.execute(
+        "DELETE FROM produtos WHERE codigo_cbz = ?",
+        (produto_excluir,)
+    )
+
+    con.commit()
+
+    st.success(
+        "Produto excluído com sucesso."
+    )
+
+    st.rerun()
+```
+
+
         st.dataframe(
             df,
             use_container_width=True,
