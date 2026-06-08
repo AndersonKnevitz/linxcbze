@@ -436,7 +436,6 @@ confirmar = st.checkbox(
 
 if st.button("Excluir Produto"):
 
-```
 if not confirmar:
 
     st.warning(
@@ -457,7 +456,6 @@ else:
     )
 
     st.rerun()
-```
 
 
         st.dataframe(
