@@ -229,6 +229,77 @@ div[role="option"]{
 div[role="option"]:hover{
     background:#1E293B !important;
 }
+/* ==================================
+   SELECTBOX DARK MODE
+================================== */
+
+/* Campo fechado */
+
+[data-baseweb="select"] > div{
+    background:#1E293B !important;
+    border:1px solid #334155 !important;
+    border-radius:10px !important;
+}
+
+/* Texto selecionado */
+
+[data-baseweb="select"] span{
+    color:#FFFFFF !important;
+    font-weight:500 !important;
+}
+
+/* Ícone da seta */
+
+[data-baseweb="select"] svg{
+    fill:#FFFFFF !important;
+}
+
+/* Dropdown aberto */
+
+div[role="listbox"]{
+    background:#111827 !important;
+    border:1px solid #334155 !important;
+}
+
+/* Cada item da lista */
+
+div[role="option"]{
+    background:#111827 !important;
+    color:#FFFFFF !important;
+}
+
+/* Texto dentro dos itens */
+
+div[role="option"] *{
+    color:#FFFFFF !important;
+}
+
+/* Item ao passar mouse */
+
+div[role="option"]:hover{
+    background:#1E293B !important;
+}
+
+/* Item selecionado */
+
+div[aria-selected="true"]{
+    background:#2563EB !important;
+    color:#FFFFFF !important;
+}
+
+/* Corrige componentes internos do Streamlit */
+
+[data-baseweb="popover"]{
+    background:#111827 !important;
+}
+
+[data-baseweb="menu"]{
+    background:#111827 !important;
+}
+
+[data-baseweb="menu"] *{
+    color:#FFFFFF !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
