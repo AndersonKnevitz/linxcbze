@@ -300,6 +300,49 @@ div[aria-selected="true"]{
 [data-baseweb="menu"] *{
     color:#FFFFFF !important;
 }
+/* SELECTBOX FECHADO */
+
+div[data-baseweb="select"] > div {
+    background-color: #1E293B !important;
+    color: #FFFFFF !important;
+}
+
+div[data-baseweb="select"] span {
+    color: #FFFFFF !important;
+}
+
+/* MENU ABERTO */
+
+ul[role="listbox"] {
+    background: #111827 !important;
+}
+
+/* ITENS */
+
+li[role="option"] {
+    background: #111827 !important;
+    color: #FFFFFF !important;
+}
+
+/* TEXTO DOS ITENS */
+
+li[role="option"] span {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+/* ITEM SELECIONADO */
+
+li[aria-selected="true"] {
+    background: #2563EB !important;
+    color: #FFFFFF !important;
+}
+
+/* HOVER */
+
+li[role="option"]:hover {
+    background: #334155 !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
