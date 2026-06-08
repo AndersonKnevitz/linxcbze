@@ -1,2 +1,1 @@
-# linxcbze
-Integração de produtos zé delivery chopp com retaguarda Linx
+Projeto Consulta de Produtos CBZ
